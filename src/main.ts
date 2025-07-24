@@ -5,35 +5,35 @@ const tc = new TinyCanvas("canvas");
 
 var bodies: Body[] = [];
 
-tc.loop((delta: number) => {
+tc.loop((dt: number) => {
      tc.clear();
 
      for (let i = 0; i < bodies.length; i++) {
           let body = bodies[i];
           tc.circle(body.position.x, body.position.y, body.radius, body.color)
-          tc.drawVector(
-               body.position,
-               body.velocity,
-               "green",
-               1100
-          );
-          tc.drawVector(
-               body.position,
-               body.acceleration,
-               'red',
-               1000000
-          );
-          body.update(delta, body, bodies)
+          // tc.drawVector(
+          //      body.position,
+          //      body.velocity,
+          //      "green",
+          //      110
+          // );
+          // tc.drawVector(
+          //      body.position,
+          //      body.acceleration,
+          //      'red',
+          //      100000
+          // );
+          body.update(dt, bodies)
      }
 
      tc.text((bodies[bodies.length - 1]?.speed * 1000 / 36).toFixed(2) + 'cm/s', 140, 140, 70)
+     tc.text(tc.fps + "fps", tc.width - (140 + 70), 140, 70)
 })
-
 
 const Sun = new Body({
      position: { x: tc.width / 2, y: tc.height / 2 },
      mass: 1000000 * 10000000,
-     radius: 150,
+     radius: 250,
      color: 'orange',
      isStatic: true
 })
@@ -45,19 +45,11 @@ const Earth = new Body({
      color: 'green'
 })
 
-const Unknown = new Body({
-     position: { x: 2500, y: 660 },
-     mass: 1000000 * 10000,
-     radius: 40,
-     color: 'white',
-     isStatic: true
-})
-
 bodies.push(Sun)
 bodies.push(Earth)
-// bodies.push(Unknown)
 
 controlMove();
+// controlPlus();
 
 function controlMove() {
      document.addEventListener('click', ()=>{
@@ -92,10 +84,10 @@ function controlPlus() {
           if (e.ctrlKey && e.shiftKey) {
                bodies.push(new Body({
                     position: { x: e.pageX, y: e.pageY },
-                    mass: 1000000 * 100000,
-                    radius: 65,
-                    color: 'green',
-                    isStatic: true
+                    mass: 1000000 * 1000000000,
+                    radius: 15,
+                    color: '#363636',
+                    // isStatic: true
                }))
           }
      

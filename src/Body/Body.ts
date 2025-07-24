@@ -35,7 +35,8 @@ export default class Body {
         this.netForce.y = force.y;
     }
 
-    public calculateAllForces(body: Body, bodies: Body[]) {
+    public calculateAllForces(bodies: Body[]) {
+        const body = this;
         const memory = []
 
         for (let i = 0; i < bodies.length; i++) {
@@ -45,8 +46,7 @@ export default class Body {
                 continue;
             }
 
-            // let force = this.calculateGravityForce(body, body2)
-            let force = this.calculateShellGravityForce(body, body2)
+            let force = this.calculateShellGravityForce(body2)
             memory.push(force);
         }
 
@@ -100,46 +100,14 @@ export default class Body {
         };
     }
 
-
-    public calculateGravityForce(body1: Body, body2: Body): Vector2 {
-        let m1 = body1.mass;
-        let m2 = body2.mass;
-
-        let dx = body2.position.x - body1.position.x;
-        let dy = body2.position.y - body1.position.y;
-
-        // distance
-        let r = Math.sqrt(dx * dx + dy * dy)
-
-        r = Math.max(r, 1)
-
-        // normalize the direction
-        let nx = dx / r;
-        let ny = dy / r;
-
-        // F = G * ((m1 * m2) / (r * r))
-        // G = 6.67430e-11
-        // m = mass
-        // r = radius
-        let F = G * (m1 * m2) / (r * r);
-
-
-        // apply the force to the true direction
-        let Fx = F * nx;
-        let Fy = F * ny;
-
-        // console.log(Fx)
-
-        return { x: Fx, y: Fy };
-    }
-
     public calculateSpeed() {
         let velocity = this.velocity
         this.speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
     }
     
 
-    public calculateShellGravityForce(body1: Body, body2: Body): Vector2 {
+    public calculateShellGravityForce(body2: Body): Vector2 {
+        const body1 = this;
         const dx = body2.position.x - body1.position.x;
         const dy = body2.position.y - body1.position.y;
         let r = Math.sqrt(dx * dx + dy * dy);
@@ -171,12 +139,10 @@ export default class Body {
     }
 
 
-    public update(dt: number, body: Body, bodies: Body[]) {
+    public update(dt: number, bodies: Body[]) {
         if (this.isStatic)
             return;
-
-        this.calculateAllForces(body, bodies);
-
+        this.calculateAllForces(bodies);
 
         // F = ma -> a = F/m
         // a = acceleration
